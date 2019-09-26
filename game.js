@@ -11,23 +11,58 @@ var winningMessage;
 var won = false;
 var currentScore = 0;
 var winningScore = 100;
+var v;
+var s;
 
 // add collectable items to the game
 function addItems() {
   items = game.add.physicsGroup();
-  createItem(375, 300, 'coin');
+  v = game.add.physicsGroup();
+  s=game.add.physicsGroup()
+
+  
+  createItem(565, 300, 'coin');
+  createItem(100,50,'coin');
+  createItem(280,150,'coin');
+  createItem(250,150,'coin');
+  createItem(180,380,'coin');
+  createItem(720,365,'coin');
+  createItem(720,90,'coin');
+  createItem(350,320,'coin');
+  createItem(350,520,'coin');
+  createItem(320,400,'coin');
+  vItem(450,310,'poison');
+  sItem(450,200,'star');
+
 }
 
 // add platforms to the game
 function addPlatforms() {
   platforms = game.add.physicsGroup();
-  platforms.create(450, 150, 'platform');
+  platforms.create(450, 350, 'platform');
+  platforms.create(450, 150, 'platform_2');
+  platforms.create(100,450,'platform');
+  platforms.create(200,200,'platform_2');
+  platforms.create(610,450,'platform_2');
+  platforms.create(610,200,'platform');
+  platforms.create(320,450,'platform_2');
   platforms.setAll('body.immovable', true);
+ 
 }
 
 // create a single animated item and add to screen
 function createItem(left, top, image) {
   var item = items.create(left, top, image);
+  item.animations.add('spin');
+  item.animations.play('spin', 10, true);
+}
+function vItem(left, top, image) {
+  var item = v.create(left, top, image);
+  item.animations.add('spin');
+  item.animations.play('spin', 10, true);
+}
+function sItem(left, top, image) {
+  var item = s.create(left, top, image);
   item.animations.add('spin');
   item.animations.play('spin', 10, true);
 }
@@ -43,10 +78,23 @@ function createBadge() {
 // when the player collects an item on the screen
 function itemHandler(player, item) {
   item.kill();
+  
   currentScore = currentScore + 10;
   if (currentScore === winningScore) {
       createBadge();
   }
+}
+function vHandler(player, v) {
+  v.kill();
+  
+  currentScore = currentScore - 10;
+  
+}
+function sHandler(player, s) {
+  s.kill();
+  
+  currentScore = currentScore + 50;
+  
 }
 
 // when the player collects the badge at the end of the game
@@ -65,11 +113,16 @@ window.onload = function () {
     
     //Load images
     game.load.image('platform', 'platform_1.png');
+    game.load.image('platform_2','platform_2.png');
+    
     
     //Load spritesheets
     game.load.spritesheet('player', 'chalkers.png', 48, 62);
     game.load.spritesheet('coin', 'coin.png', 36, 44);
     game.load.spritesheet('badge', 'badge.png', 42, 54);
+    game.load.spritesheet('poison','poison.png',32,32);
+    game.load.spritesheet('star','star.png',32,32);
+
   }
 
   // initial game set up
@@ -96,6 +149,8 @@ window.onload = function () {
     text.text = "SCORE: " + currentScore;
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.overlap(player, items, itemHandler);
+    game.physics.arcade.overlap(player, v, vHandler);
+    game.physics.arcade.overlap(player, s, sHandler);
     game.physics.arcade.overlap(player, badges, badgeHandler);
     player.body.velocity.x = 0;
 
